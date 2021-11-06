@@ -32,11 +32,10 @@ def categorical_to_dummy(dataframe, verbose=False):
 
     for variable in variables2convert:
         dummy = pd.get_dummies(dataframe[variable], drop_first=True)
-        dataframe.drop(labels=variable, axis=1, inplace=True)
+        dataframe.drop(labels=variable, axis=1, inplace=True)  # This line produce a warning
         dataframe = pd.concat([dataframe, dummy], axis=1)
 
     if verbose is True:
         print(dataframe.head(5))
         print(dataframe.columns)
         print(dataframe.loc[0, :])
-
