@@ -82,8 +82,9 @@ def pca(dataframe, verbose=False):
     dataframe_pca = dataframe.copy()
     dataframe_pca.drop(labels='Satisfied', axis=1, inplace=True)
 
-    pca2.fit(dataframe)
-    dataframe_pca = pd.DataFrame(pca2.transform(dataframe))
+    pca2.fit(dataframe_pca)
+    dataframe_pca = pd.DataFrame(pca2.transform(dataframe_pca))
+    dataframe_pca['Satisfied'] = dataframe['Satisfied']
 
     if verbose is True:
         print("\n\n PCA: \n")
@@ -92,7 +93,7 @@ def pca(dataframe, verbose=False):
 
         print("Attributes variance:" + str(pd.DataFrame(pca2.explained_variance_).transpose()) + "\n")
 
-        
+
         explained_var = pd.DataFrame(pca2.explained_variance_ratio_).transpose()
         sns.barplot(data=explained_var)
         plt.show()
