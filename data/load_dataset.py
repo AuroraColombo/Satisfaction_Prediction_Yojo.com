@@ -9,5 +9,5 @@ def load_dataset(filepath, verbose=False):
     return df
 
 
-if __name__ == '__main__':
-    load_dataset('../model.csv', True)
+# if __name__ == '__main__':
+#     load_dataset('../model.csv', True)

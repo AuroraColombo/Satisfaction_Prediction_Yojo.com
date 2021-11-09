@@ -1,7 +1,11 @@
 import math
 
+import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+import numpy as np
+import seaborn as sns
 
 
 def remove_duplicates(dataframe, verbose=False):
@@ -46,10 +50,14 @@ def categorical_to_dummy(dataframe, verbose=False):
 
 
 def standardize(dataframe):
-    scaler = StandardScaler().fit(dataframe.loc[:, :])
-    dataframe.loc[:, :] = scaler.transform(dataframe.loc[:, :])
+    scaler = StandardScaler()
+    scaler.fit(dataframe.loc[:, :].astype(float))  # provo a selezionare qui i parametri
+    dataframe_stand = pd.DataFrame(scaler.transform(dataframe.loc[:, :].astype(float)))
+    dataframe_stand.columns = dataframe.columns
+    dataframe_stand.hist()
+    plt.show()
 
-    return dataframe, scaler
+    return dataframe_stand, scaler
 
 
 def feature_2_log(dataframe, feature, log_base):
@@ -60,3 +68,19 @@ def feature_2_log(dataframe, feature, log_base):
     dataframe.loc[:, feature] = dataframe[feature].apply(lambda x: math.log(x + offset, log_base))
 
     return dataframe
+
+
+def pca(dataframe):
+    pca2 = PCA()
+    pca2.fit(dataframe) # il problema è qui dentro :)
+    dataframe_pca = pd.DataFrame(pca2.transform(dataframe))
+
+    print("\n\n PCA: \n")
+    print("Dataset shape before PCA: ", dataframe.shape + "\n")
+    print("Dataset shape after PCA: ", dataframe_pca.shape + "\n")
+
+    print("Attributes variance:" + pd.DataFrame(pca.explained_variance_).transpose() + "\n")
+
+    explained_var = pd.DataFrame(pca2.explained_variance_ratio_).transpose()
+    sns.barplot(data=explained_var)
+    plt.show()
