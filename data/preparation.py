@@ -93,7 +93,6 @@ def pca(dataframe, verbose=False):
 
         print("Attributes variance:" + str(pd.DataFrame(pca2.explained_variance_).transpose()) + "\n")
 
-
         explained_var = pd.DataFrame(pca2.explained_variance_ratio_).transpose()
         sns.barplot(data=explained_var)
         plt.show()
@@ -101,9 +100,13 @@ def pca(dataframe, verbose=False):
         cum_explained_var = np.cumsum(pca2.explained_variance_ratio_)
         plt.plot(cum_explained_var)
         plt.xlabel('number of components')
-        plt.ylabel('cumulative explained variance');
+        plt.ylabel('cumulative explained variance')
         plt.show()
 
     dataframe_pca['Satisfied'] = dataframe['Satisfied']
 
     return pca2, dataframe_pca
+
+def paired_plot(dataframe):
+    sns.pairplot(dataframe)
+    plt.show()

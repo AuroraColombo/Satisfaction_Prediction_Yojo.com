@@ -14,10 +14,9 @@ def main():
     dataframe = categorical_to_dummy(dataframe, True)
 
     # Normalizing variable 'Price' through log10 transformation
-
     dataframe = feature_2_log(dataframe, 'Price', 10)
-    # StandardScaler only to numerical variables
 
+    # StandardScaler only to numerical variables
     dataframe, scaler = standardize(dataframe, ['Age', 'Price', 'Shipping delay in days', 'Arrival delay in days',
                                                 'Product description accuracy', 'Manufacturer sustainability',
                                                 'Packaging quality',
@@ -26,9 +25,14 @@ def main():
                                                 'Ease check-out procedure', 'Relevance of related products',
                                                 'Costumer insurance'], False)
 
+    # Paired plot
+    paired_plot(dataframe)
+    plt.show()
+
     # PCA
     pca2, dataframe_pca = pca(dataframe, verbose=True)  # At this point dataframe is only scaled
 
+    # Models
     test_model(dataframe)
 
 if __name__ == '__main__':
