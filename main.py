@@ -3,6 +3,7 @@ import pandas as pd
 
 from data.load_dataset import load_dataset
 from data.preparation import *
+from training.model_training import test_model
 
 
 def main():
@@ -14,21 +15,21 @@ def main():
 
     # Normalizing variable 'Price' through log10 transformation
 
-    dataframe = feature_2_log(dataframe, 'Price',
-                              10)  # Non applicherei la trasformazione logaritmica agli shipping e arrival, perchè mi sembra molto più normale senza (vedi hypernormal distribution)
-
+    dataframe = feature_2_log(dataframe, 'Price', 10)
     # StandardScaler only to numerical variables
 
-    standardize(dataframe, ['Age', 'Price', 'Shipping delay in days', 'Arrival delay in days',
-                          'Product description accuracy', 'Manufacturer sustainability', 'Packaging quality',
-                          'Additional options', 'Helpfulness of reviews and ratings', 'Integrity of packaging',
-                          'Ease check-out procedure', 'Relevance of related products', 'Costumer insurance'], False)
+    dataframe, scaler = standardize(dataframe, ['Age', 'Price', 'Shipping delay in days', 'Arrival delay in days',
+                                                'Product description accuracy', 'Manufacturer sustainability',
+                                                'Packaging quality',
+                                                'Additional options', 'Helpfulness of reviews and ratings',
+                                                'Integrity of packaging',
+                                                'Ease check-out procedure', 'Relevance of related products',
+                                                'Costumer insurance'], False)
 
     # PCA
-    print('a')
-    pca2, dataframe_pca = pca(dataframe, verbose=True) #At this point dataframe is only scaled
+    pca2, dataframe_pca = pca(dataframe, verbose=True)  # At this point dataframe is only scaled
 
-
+    test_model(dataframe)
 
 if __name__ == '__main__':
     main()
