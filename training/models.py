@@ -3,14 +3,17 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import BaggingClassifier
+
 
 
 def get_decision_tree():
     tree = DecisionTreeClassifier()
     parameters = {'criterion': ['entropy', 'gini'],
-                  'max_depth': [4, 5, 6, 8, 10],
-                  'min_samples_split': [5, 10, 20],
-                  'min_samples_leaf': [5, 10, 20]}
+                  'max_depth': np.arange(10, 20, 1),
+                  'min_samples_split': np.arange(30, 51, 5),
+                  'min_samples_leaf': np.arange(30, 60, 5)}
 
     return tree, parameters
 
@@ -38,3 +41,12 @@ def get_multilayer_perceptron():
                   'tol': [0.01, 0.001, 0.0001]}
 
     return nn, parameters
+
+
+def get_ensemble(base_estimator):
+    bagging = BaggingClassifier(base_estimator=base_estimator)
+    parameters = {'n_estimators': np.arange(2, 1000, 50),
+                  'max_samples': np.arange(0.1, 1.1, 0.1),
+                  'max_features': np.arange(0.1, 1.1, 0.1),
+                  'bootstrap': [True, False]}
+
