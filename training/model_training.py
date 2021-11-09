@@ -1,6 +1,6 @@
 from sklearn.metrics import f1_score, precision_score, confusion_matrix
 from sklearn.model_selection import GridSearchCV, train_test_split
-from training.models import get_decision_tree
+from training.models import get_knn
 
 
 def hyperp_search(classifier, parameters, dataframe, verbose=False):
@@ -8,7 +8,7 @@ def hyperp_search(classifier, parameters, dataframe, verbose=False):
     X = dataframe.iloc[:, :-1]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, stratify=y, random_state=313)
 
-    gs = GridSearchCV(classifier, parameters, cv=3, scoring='f1', verbose=0, n_jobs=-1)
+    gs = GridSearchCV(classifier, parameters, cv=5, scoring='f1', verbose=10, n_jobs=-1)
     gs = gs.fit(X_train, y_train)
 
     best_model = gs.best_estimator_
@@ -25,6 +25,6 @@ def hyperp_search(classifier, parameters, dataframe, verbose=False):
 
 
 def test_model(dataframe):
-    tree, params = get_decision_tree()
+    tree, params = get_knn()
     hyperp_search(tree, params, dataframe, True)
     #return results

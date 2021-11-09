@@ -26,8 +26,8 @@ def main():
                                                 'Costumer insurance'], False)
 
     # Paired plot
-    paired_plot(dataframe)
-    plt.show()
+    # paired_plot(dataframe)
+    # plt.show()
 
     # PCA
     pca2, dataframe_pca = pca(dataframe, verbose=True)  # At this point dataframe is only scaled
