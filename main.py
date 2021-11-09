@@ -22,11 +22,11 @@ def main():
     standardize(df, ['Age', 'Price', 'Shipping delay in days', 'Arrival delay in days',
                           'Product description accuracy', 'Manufacturer sustainability', 'Packaging quality',
                           'Additional options', 'Helpfulness of reviews and ratings', 'Integrity of packaging',
-                          'Ease check-out procedure', 'Relevance of related products', 'Costumer insurance'], True)
+                          'Ease check-out procedure', 'Relevance of related products', 'Costumer insurance'], False)
 
     # PCA
     print('a')
-    pca(df)
+    pca(df, verbose=True)
 
 
 if __name__ == '__main__':

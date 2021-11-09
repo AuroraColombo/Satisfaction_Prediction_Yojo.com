@@ -1,6 +1,7 @@
 import math
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
@@ -91,8 +92,15 @@ def pca(dataframe, verbose=False):
 
         print("Attributes variance:" + str(pd.DataFrame(pca2.explained_variance_).transpose()) + "\n")
 
+        
         explained_var = pd.DataFrame(pca2.explained_variance_ratio_).transpose()
         sns.barplot(data=explained_var)
+        plt.show()
+
+        cum_explained_var = np.cumsum(pca2.explained_variance_ratio_)
+        plt.plot(cum_explained_var)
+        plt.xlabel('number of components')
+        plt.ylabel('cumulative explained variance');
         plt.show()
 
     dataframe_pca['Satisfied'] = dataframe['Satisfied']
