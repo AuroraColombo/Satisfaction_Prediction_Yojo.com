@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
-import numpy as np
 import seaborn as sns
 
 
@@ -49,15 +48,21 @@ def categorical_to_dummy(dataframe, verbose=False):
     return dataframe
 
 
-def standardize(dataframe):
+def standardize(dataframe, features, verbose=False):
     scaler = StandardScaler()
-    scaler.fit(dataframe.loc[:, :].astype(float))  # provo a selezionare qui i parametri
-    dataframe_stand = pd.DataFrame(scaler.transform(dataframe.loc[:, :].astype(float)))
+    dataframe_stand = dataframe.copy()
+    scaler.fit(dataframe_stand.loc[:, :].astype(float))  # provo a selezionare qui i parametri
+    dataframe_stand = pd.DataFrame(scaler.transform(dataframe_stand.loc[:, :].astype(float)))
     dataframe_stand.columns = dataframe.columns
-    dataframe_stand.hist()
-    plt.show()
 
-    return dataframe_stand, scaler
+    dataframe[features] = dataframe_stand[features]
+
+    if verbose is True:
+        dataframe_stand.hist()
+        plt.show()
+        print(dataframe.head(5))
+
+    return dataframe, scaler
 
 
 def feature_2_log(dataframe, feature, log_base):
@@ -70,17 +75,26 @@ def feature_2_log(dataframe, feature, log_base):
     return dataframe
 
 
-def pca(dataframe):
+def pca(dataframe, verbose=False):
     pca2 = PCA()
-    pca2.fit(dataframe) # il problema è qui dentro :)
+
+    dataframe_pca = dataframe.copy()
+    dataframe_pca.drop(labels='Satisfied', axis=1, inplace=True)
+
+    pca2.fit(dataframe)
     dataframe_pca = pd.DataFrame(pca2.transform(dataframe))
 
-    print("\n\n PCA: \n")
-    print("Dataset shape before PCA: ", dataframe.shape + "\n")
-    print("Dataset shape after PCA: ", dataframe_pca.shape + "\n")
+    if verbose is True:
+        print("\n\n PCA: \n")
+        print("Dataset shape before PCA: ", str(dataframe.shape) + "\n")
+        print("Dataset shape after PCA: ", str(dataframe_pca.shape) + "\n")
 
-    print("Attributes variance:" + pd.DataFrame(pca.explained_variance_).transpose() + "\n")
+        print("Attributes variance:" + str(pd.DataFrame(pca2.explained_variance_).transpose()) + "\n")
 
-    explained_var = pd.DataFrame(pca2.explained_variance_ratio_).transpose()
-    sns.barplot(data=explained_var)
-    plt.show()
+        explained_var = pd.DataFrame(pca2.explained_variance_ratio_).transpose()
+        sns.barplot(data=explained_var)
+        plt.show()
+
+    dataframe_pca['Satisfied'] = dataframe['Satisfied']
+
+    return pca2, dataframe_pca
