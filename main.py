@@ -23,15 +23,15 @@ def main():
                                                 'Costumer insurance'], False)
 
     # Paired plot
-    # paired_plot(dataframe)
+    # paired_plot(dataframe, hue='Satisfied')
     # plt.show()
 
     # PCA
     pca2, dataframe_pca = pca(dataframe, verbose=False)  # At this point dataframe is only scaled
 
     # Models
-    # test_model(dataframe)
-    find_best_params(dataframe)
+    test_model(dataframe)
+
 
 
 if __name__ == '__main__':

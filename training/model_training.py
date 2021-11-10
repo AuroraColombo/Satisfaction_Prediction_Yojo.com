@@ -4,6 +4,9 @@ from sklearn.metrics import f1_score, precision_score, confusion_matrix
 from sklearn.model_selection import GridSearchCV, train_test_split, StratifiedKFold, cross_val_score
 from training.models import *
 from tqdm import tqdm
+from sklearn.model_selection import GridSearchCV, train_test_split
+from training.models import get_knn, get_multilayer_perceptron
+
 
 
 def hyperp_search(classifier, parameters, dataframe, verbose=False):
