@@ -38,7 +38,7 @@ def hyperp_search(classifier, parameters, dataframe, verbose=False):
 
 
 def test_model(dataframe):
-    model, params = get_knn()
+    model, params = get_ensemble()
     hyperp_search(model, params, dataframe, True)
     # return results
 

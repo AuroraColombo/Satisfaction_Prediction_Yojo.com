@@ -35,8 +35,7 @@ def remove_missing_values(dataframe, verbose=False):
     return dataframe, dataframe_wo_nan
 
 
-def categorical_to_dummy(dataframe, verbose=False):
-    variables2convert = ['Gender', 'Customer Type', 'NewUsed', 'Category', 'Satisfaction']
+def categorical_to_dummy(dataframe, variables2convert, verbose=False):
 
     for variable in variables2convert:
         dummy = pd.get_dummies(dataframe[variable], drop_first=True)
