@@ -23,7 +23,7 @@ def main():
                                                 'Costumer insurance'], False)
 
     # Paired plot
-    # paired_plot(dataframe)
+    # paired_plot(dataframe, hue='Satisfied')
     # plt.show()
 
     # PCA

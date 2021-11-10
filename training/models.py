@@ -1,11 +1,14 @@
 import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.tree import DecisionTreeClassifier
+#from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import BaggingClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.ensemble import AdaBoostClassifier
+#from sklearn.model_selection import GridSearchCV
 
 
 def get_decision_tree():
@@ -61,4 +64,22 @@ def get_ensemble(base_estimator):
                   'max_samples': np.arange(0.1, 1.1, 0.1),
                   'max_features': np.arange(0.1, 1.1, 0.1),
                   'bootstrap': [True, False]}
+    return bagging, parameters
 
+
+def get_adaboost():
+    adaboost = AdaBoostClassifier()
+    parameters = {'n_estimators': [5, 10, 20, 30],
+                  'learning_rate': [0.0001, 0.01, 0.1, 1, 10]}
+
+    return adaboost, parameters
+
+
+def get_svm():
+    classifier = SVC()
+    parameters = {"kernel": ['linear', 'poly', 'rbf', 'sigmoid'],
+                  "C": [0.1, 100],
+                  "gamma": [1],
+                  "degree": [2, 3, 4]}
+
+    return classifier, parameters
