@@ -5,7 +5,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import BaggingClassifier
-
+from sklearn.linear_model import LogisticRegression
 
 
 def get_decision_tree():
@@ -19,7 +19,7 @@ def get_decision_tree():
 
 def get_knn():
     knn = KNeighborsClassifier()
-    parameters = {'n_neighbors': np.arange(1, 1000)}
+    parameters = {'n_neighbors': np.arange(20, 1000, 40)}
 
     return knn, parameters
 
@@ -29,16 +29,28 @@ def get_naive_bayes():
 
     return model, parameters
 
+
+def get_logistic_regression():
+    model = LogisticRegression()
+    parameters = {'penalty': ['l1', 'l2', 'elasticnet', 'none'],
+                  'tol': [0.01, 0.001],
+                  'C': np.arange(5, 15, 1),
+                  'solver': ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga'],
+                  'max_iter': np.arange(250, 1000, 250)}
+
+    return model, parameters
+
+
 def get_multilayer_perceptron():
     nn = MLPClassifier()
     parameters = {'hidden_layer_sizes': np.arange(2, 10, 2),
                   'activation': ['relu', 'sigmoid', 'tanh'],
                   'alpha': [0.0001],
-                  'batch_size': np.arange(200, 1000, 200),
+                  'batch_size': np.arange(250, 1000, 250),
                   'learning_rate': ['constant', 'lbfgs', 'invscaling', 'adaptive'],
                   'max_iter': np.arange(250, 1000, 250),
                   'solver': ['sgd', 'adam'],
-                  'tol': [0.01, 0.001, 0.0001]}
+                  'tol': [0.01, 0.001]}
 
     return nn, parameters
 

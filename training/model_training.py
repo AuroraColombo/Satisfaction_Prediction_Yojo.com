@@ -1,7 +1,7 @@
 from sklearn import metrics
 from sklearn.metrics import f1_score, precision_score, confusion_matrix
 from sklearn.model_selection import GridSearchCV, train_test_split
-from training.models import get_knn
+from training.models import get_knn, get_multilayer_perceptron
 
 
 def hyperp_search(classifier, parameters, dataframe, verbose=False):
