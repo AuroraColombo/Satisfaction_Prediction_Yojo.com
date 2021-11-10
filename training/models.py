@@ -4,7 +4,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import BaggingClassifier
+from sklearn.ensemble import BaggingClassifier, RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.ensemble import AdaBoostClassifier
@@ -12,21 +12,21 @@ import matplotlib.pyplot as plt
 from sklearn import metrics
 
 
-def get_decision_tree(): # Raffa
+def get_decision_tree():
     tree = DecisionTreeClassifier()
     parameters = {'criterion': ['entropy', 'gini'],
-                  'max_depth': np.arange(10, 20, 1),
-                  'min_samples_split': np.arange(30, 51, 5),
-                  'min_samples_leaf': np.arange(30, 60, 5)}
+                  'max_depth': np.arange(2, 40, 5),
+                  'min_samples_split': np.arange(1, 100, 10),
+                  'min_samples_leaf': np.arange(1, 100, 10),
+                  'class_weight': ['balanced', None]}
 
     return tree, parameters
 
 
-# def get_knn(): # Au
-#    knn = KNeighborsClassifier()
-#    parameters = {'n_neighbors': np.arange(5, 10, 1)}
-
-    return knn, parameters
+# def get_knn():
+    # knn = KNeighborsClassifier()
+    # parameters = {'n_neighbors': np.arange(5, 10, 1)}
+    # return knn, parameters
 
 
 def get_naive_bayes():
@@ -36,7 +36,7 @@ def get_naive_bayes():
     return model, parameters
 
 
-def get_logistic_regression(): # Davi
+def get_logistic_regression():
     model = LogisticRegression()
     parameters = {'penalty': ['l1', 'l2', 'elasticnet', 'none'],
                   'tol': [0.01, 0.001],
@@ -61,11 +61,16 @@ def get_multilayer_perceptron():
     return nn, parameters
 
 
-def get_ensemble(base_estimator):
-    bagging = BaggingClassifier(base_estimator=base_estimator)
-    parameters = {'n_estimators': np.arange(2, 1000, 50),
-                  'max_samples': np.arange(0.1, 1.1, 0.1),
-                  'max_features': np.arange(0.1, 1.1, 0.1),
+def get_ensemble():
+    bagging = RandomForestClassifier()
+    parameters = {'criterion': ['entropy', 'gini'],
+                  'max_depth': np.arange(2, 20, 5),
+                  'min_samples_split': np.arange(1, 101, 25),
+                  'min_samples_leaf': np.arange(1, 101, 25),
+                  'class_weight': ['balanced', None],
+                  'n_estimators': [2, 10, 30, 100],
+                  'max_samples': [0.1, 0.5, 0.8, 1.0],
+                  'max_features': [0.1, 0.5, 0.8, 1.0],
                   'bootstrap': [True, False]}
     return bagging, parameters
 
