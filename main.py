@@ -1,6 +1,6 @@
 from data.load_dataset import load_dataset
 from data.preparation import *
-from training.model_training import test_model
+from training.model_training import test_model, find_best_params
 
 
 def main():
@@ -30,7 +30,8 @@ def main():
     pca2, dataframe_pca = pca(dataframe, verbose=False)  # At this point dataframe is only scaled
 
     # Models
-    test_model(dataframe)
+    # test_model(dataframe)
+    find_best_params(dataframe)
 
 
 if __name__ == '__main__':

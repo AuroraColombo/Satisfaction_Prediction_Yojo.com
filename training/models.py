@@ -7,7 +7,6 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import BaggingClassifier
 
 
-
 def get_decision_tree():
     tree = DecisionTreeClassifier()
     parameters = {'criterion': ['entropy', 'gini'],
@@ -17,17 +16,20 @@ def get_decision_tree():
 
     return tree, parameters
 
+
 def get_knn():
     knn = KNeighborsClassifier()
-    parameters = {'n_neighbors': np.arange(1, 1000)}
+    parameters = {'n_neighbors': [5, 10, 40]}
 
     return knn, parameters
+
 
 def get_naive_bayes():
     model = GaussianNB()
     parameters = {}
 
     return model, parameters
+
 
 def get_multilayer_perceptron():
     nn = MLPClassifier()
@@ -43,10 +45,11 @@ def get_multilayer_perceptron():
     return nn, parameters
 
 
-def get_ensemble(base_estimator):
+def get_ensemble(base_estimator, base_etimator_parameters):
     bagging = BaggingClassifier(base_estimator=base_estimator)
     parameters = {'n_estimators': np.arange(2, 1000, 50),
                   'max_samples': np.arange(0.1, 1.1, 0.1),
                   'max_features': np.arange(0.1, 1.1, 0.1),
                   'bootstrap': [True, False]}
+
 

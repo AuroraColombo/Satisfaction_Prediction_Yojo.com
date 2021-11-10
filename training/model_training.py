@@ -1,7 +1,9 @@
+from matplotlib import pyplot as plt
 from sklearn import metrics
 from sklearn.metrics import f1_score, precision_score, confusion_matrix
-from sklearn.model_selection import GridSearchCV, train_test_split
-from training.models import get_knn
+from sklearn.model_selection import GridSearchCV, train_test_split, StratifiedKFold, cross_val_score
+from training.models import *
+from tqdm import tqdm
 
 
 def hyperp_search(classifier, parameters, dataframe, verbose=False):
@@ -29,8 +31,53 @@ def hyperp_search(classifier, parameters, dataframe, verbose=False):
         print("")
         print(confusion_matrix(y_test, y_pred))
 
+    return best_model
+
 
 def test_model(dataframe):
-    tree, params = get_knn()
-    hyperp_search(tree, params, dataframe, True)
+    model, params = get_knn()
+    hyperp_search(model, params, dataframe, True)
     # return results
+
+
+# def find_best_params(dataframe):
+#     model, params = get_knn()
+#
+#     acc = []
+#     x = []
+#     start = 1
+#     end = 10
+#     length = range(start, end)
+#
+#     for i in tqdm(length):
+#         knn = KNeighborsClassifier(n_neighbors=i)
+#         _, c, _ = cross_val(knn, dataframe)
+#         acc.append(c)
+#         x.append(i)
+#
+#     # min samples split per ora inferiore a 315 ca
+#     plt.plot(x, acc)
+#     plt.grid()
+#     # naming the x axis
+#     plt.xlabel('Max_depth')
+#     # naming the y axis
+#     plt.ylabel('accuracy')
+#
+#     # giving a title to my graph
+#
+#     plt.title('Max_depth/Accuracy')
+#
+#     # plt.savefig("Min_impurity_decrease.png")
+#     # function to show the plot
+#     plt.show()
+#
+#     print(max(acc))
+#     print(x[acc.index(max(acc))])
+#
+#
+# def cross_val(model, dataframe):
+#     y = dataframe['Satisfied']
+#     X = dataframe.iloc[:, :-1]
+#     cv = StratifiedKFold(n_splits=5, shuffle=False)
+#     c = cross_val_score(model, X, y, cv=cv, scoring='f1')
+#     return c, round(np.mean(c) * 100, 2), round(np.std(c) * 100, 2)
