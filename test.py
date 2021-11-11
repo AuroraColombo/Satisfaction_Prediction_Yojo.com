@@ -17,7 +17,7 @@ df, _ = remove_missing_values(df, True)
 # columns = df.columns
 
 plt.show()
-var = "Price"
+var = "Ease check-out procedure"
 df[var].hist(bins=10)
 plt.show()
 

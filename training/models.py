@@ -63,15 +63,15 @@ def get_multilayer_perceptron():
 
 def get_ensemble():
     bagging = RandomForestClassifier()
-    parameters = {'criterion': ['gini'],
-                  'max_depth': [10, 50, 100],
-                  'min_samples_split': [100, 200, 500],
+    parameters = {'criterion': ['gini', 'entropy'],
+                  'max_depth': [2, 20, 50],
+                  'min_samples_split': [2, 100],
                   'min_samples_leaf': [1, 100],
-                  'class_weight': ['balanced'],
-                  'n_estimators': [30, 50, 100],
-                  'max_samples': [0.5, 0.8, 1.0],
-                  'max_features': [0.5, 0.8, 1.0],
-                  'bootstrap': [False]}
+                  'class_weight': ['balanced', None],
+                  'n_estimators': [2, 50, 100],
+                  'max_samples': [0.5, 1.0],
+                  'max_features': [0.5, 1.0],
+                  'bootstrap': [False, True]}
     return bagging, parameters
 
 

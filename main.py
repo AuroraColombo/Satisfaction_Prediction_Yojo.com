@@ -15,6 +15,8 @@ def main():
     dataframe19 = dataframe01.copy(deep=True)
     dataframe19.drop(labels=['Age', 'Product description accuracy', 'Arrival delay in days', 'Gender'], axis=1, inplace=True)
 
+
+
     dataframe = categorical_to_dummy(dataframe, variables2convert=['Gender', 'Customer Type', 'NewUsed', 'Category',
                                                                    'Satisfaction'], verbose=False)
     df_wo_nan = categorical_to_dummy(df_wo_nan, variables2convert=['Gender', 'Customer Type', 'NewUsed', 'Category',
@@ -73,8 +75,12 @@ def main():
     pca2, dataframe_pca01 = pca(dataframe01, verbose=True)  # At this point dataframe is only scaled
     pca2, dataframe_pca19 = pca(dataframe19, verbose=True)  # At this point dataframe is only scaled
 
+    # Outliers
+    # count_outliers_zindex(dataframe)
+    # count_outliers_boxplots(dataframe)
+
     # Models
-    test_model(dataframe)
+    test_model(dataframe01)
 
     # Testing knn
     # test_knn(dataframe, 60, 63, 1) # 61 is the optimal

@@ -107,3 +107,20 @@ def pca(dataframe, verbose=False):
 def paired_plot(dataframe, target):
     sns.pairplot(dataframe, hue=target)
     plt.show()
+
+
+def count_outliers_boxplots(dataframe):
+    Q1 = dataframe.quantile(0.25)
+    Q3 = dataframe.quantile(0.75)
+    IQR = Q3 - Q1
+    print(((dataframe < (Q1 - 1.5 * IQR)) | (dataframe > (Q3 + 1.5 * IQR))).sum())
+
+def count_outliers_zindex(dataframe):
+    df = dataframe.copy(deep=True)
+    cols = list(dataframe.columns)
+
+    for col in cols:
+        col_zscore = col + '_z-score'
+        df[col_zscore] = (df[col] - df[col].mean())/df[col].std(ddof=0)
+
+    print(((df < -3) | (df > 3)).sum())
