@@ -12,31 +12,31 @@ df = remove_duplicates(df, True)
 
 df, _ = remove_missing_values(df, True)
 
-df_categorical = df.select_dtypes(include=['object'])
-df = categorical_to_dummy(df, True)
-columns = df.columns
+# df_categorical = df.select_dtypes(include=['object'])
+# df = categorical_to_dummy(df, True)
+# columns = df.columns
 
 plt.show()
-var = "Satisfied"
+var = "Price"
 df[var].hist(bins=10)
 plt.show()
 
-X0 = df[df['Satisfied'] == 0]
-X1 = df[df['Satisfied'] == 1]
+# X0 = df[df['Satisfied'] == 0]
+# X1 = df[df['Satisfied'] == 1]
 
-sns.histplot(X0[var], color="blue", stat='density', element="step", alpha=0.3)
-sns.histplot(X1[var], color="red", stat='density', element="step", alpha=0.3)
-plt.show()
+# sns.histplot(X0[var], color="blue", stat='density', element="step", alpha=0.3)
+# sns.histplot(X1[var], color="red", stat='density', element="step", alpha=0.3)
+# plt.show()
 
 sns.boxplot(x=df[var])
 plt.show()
-# df = feature_2_log(df, var, 10)
-# sns.boxplot(x=df[var])
-# plt.show()
+df = feature_2_log(df, var, 10)
+sns.boxplot(x=df[var])
+plt.show()
 # # df, _ = standardize(df)
 # sns.boxplot(x=df['Price'])
 # plt.show()
-
+'''
 X0 = df[df['Satisfied'] == 0]
 X1 = df[df['Satisfied'] == 1]
 
@@ -46,7 +46,7 @@ plt.show()
 
 # categoriche
 
-'''
+
 df_0 = df_categorical[df['Satisfied'] == 0]  # records wih target==0
 df_1 = df_categorical[df['Satisfied'] == 1]  # records wih target==1
 

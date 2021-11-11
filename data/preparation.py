@@ -36,7 +36,6 @@ def remove_missing_values(dataframe, verbose=False):
 
 
 def categorical_to_dummy(dataframe, variables2convert, verbose=False):
-
     for variable in variables2convert:
         dummy = pd.get_dummies(dataframe[variable], drop_first=True)
         dataframe = dataframe.drop([variable], axis=1, inplace=False)
@@ -102,9 +101,8 @@ def pca(dataframe, verbose=False):
         plt.ylabel('cumulative explained variance')
         plt.show()
 
-    dataframe_pca['Satisfied'] = dataframe['Satisfied']
-
     return pca2, dataframe_pca
+
 
 def paired_plot(dataframe):
     sns.pairplot(dataframe)
