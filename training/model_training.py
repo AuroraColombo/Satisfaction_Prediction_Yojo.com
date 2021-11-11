@@ -5,7 +5,7 @@ from sklearn.model_selection import GridSearchCV, train_test_split, StratifiedKF
 from training.models import *
 from tqdm import tqdm
 from sklearn.model_selection import GridSearchCV, train_test_split
-from training.models import get_knn, get_multilayer_perceptron
+from training.models import get_knn, get_multilayer_perceptron, get_logistic_regression
 
 
 

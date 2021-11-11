@@ -1,6 +1,7 @@
 from data.load_dataset import load_dataset
 from data.preparation import *
 from training.model_training import test_model
+from training.models import test_knn
 
 
 def main():
@@ -64,7 +65,7 @@ def main():
                                                     'Costumer insurance'], False)
 
     # Paired plot
-    # paired_plot(dataframe, hue='Satisfied')
+    # paired_plot(dataframe, 'Satisfied')
     # plt.show()
 
     # PCA
@@ -74,6 +75,9 @@ def main():
 
     # Models
     test_model(dataframe)
+
+    # Testing knn
+    # test_knn(dataframe, 60, 63, 1) # 61 is the optimal
 
 
 if __name__ == '__main__':

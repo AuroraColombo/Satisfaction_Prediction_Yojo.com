@@ -104,6 +104,6 @@ def pca(dataframe, verbose=False):
     return pca2, dataframe_pca
 
 
-def paired_plot(dataframe):
-    sns.pairplot(dataframe)
+def paired_plot(dataframe, target):
+    sns.pairplot(dataframe, hue=target)
     plt.show()

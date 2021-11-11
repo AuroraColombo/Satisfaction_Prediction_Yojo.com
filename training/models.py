@@ -1,6 +1,6 @@
 import numpy as np
+from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
-# from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -8,9 +8,9 @@ from sklearn.ensemble import BaggingClassifier, RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.ensemble import AdaBoostClassifier
+import matplotlib.pyplot as plt
+from sklearn import metrics
 
-
-# from sklearn.model_selection import GridSearchCV
 
 def get_decision_tree():
     tree = DecisionTreeClassifier()
@@ -25,8 +25,7 @@ def get_decision_tree():
 
 def get_knn():
     knn = KNeighborsClassifier()
-    parameters = {'n_neighbors': [5, 10, 40]}
-
+    parameters = {'n_neighbors': np.arange(5, 10, 1)}
     return knn, parameters
 
 
@@ -88,7 +87,40 @@ def get_svm():
     classifier = SVC()
     parameters = {"kernel": ['linear', 'poly', 'rbf', 'sigmoid'],
                   "C": [0.1, 100],
-                  "gamma": [1],
+                  "gamma": np.arange(0.5, 1.5, 0.01),
                   "degree": [2, 3, 4]}
 
     return classifier, parameters
+
+
+def test_knn(dataframe, start, stop, step):
+    score_train = []
+    score_test = []
+
+    x = dataframe.iloc[:, :-1]
+    y = dataframe.iloc[:, -1]  # [-1]]
+
+    x_train, x_test, y_train, y_test = train_test_split(x, y,
+                                                        test_size=0.30,  # by default is 75%-25%
+                                                        # shuffle is set True by default,
+                                                        stratify=y,
+                                                        random_state=123
+                                                        )  # fix random seed for replicability
+
+    neighbors = range(start, stop, step)
+
+    for i in neighbors:
+        knn = KNeighborsClassifier(n_neighbors=i)
+        knn.fit(x_train, y_train)
+        y_pred_train = knn.predict(x_train)
+        y_pred_test = knn.predict(x_test)
+        score_train.append(metrics.f1_score(y_train, y_pred_train))
+        score_test.append(metrics.f1_score(y_test, y_pred_test))
+
+    plt.xlabel('Neighbors')
+    plt.ylabel('F1')
+    plt.plot(neighbors,score_train, color='blue', alpha=1.00)
+    plt.plot(neighbors,score_test, color='red', alpha=1.00)
+
+    plt.show()
+
