@@ -1,8 +1,5 @@
 import pickle
 
-from sklearn.metrics import f1_score
-from sklearn.model_selection import train_test_split
-
 from data.load_dataset import load_dataset
 from data.preparation import *
 from model.HeterogeneousEnsemble import HeterogeneousEnsemble

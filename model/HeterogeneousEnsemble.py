@@ -109,15 +109,13 @@ class HeterogeneousEnsemble:
 
         :param dataframe: the dataset to perform cross validation on
         """
-        y = dataframe['Satisfied']
-        X = dataframe.iloc[:, :-1]
+        y = dataframe['Satisfied'].values
+        X = dataframe.iloc[:, :-1].values
         cv = StratifiedKFold(n_splits=5, shuffle=False)
         c = []
-        X = X.values
-        y = y.values
 
         X_train_split, X_test_split, y_train_split, y_test_split = train_test_split(X, y, test_size=0.2, stratify=y,
-                                                                                    random_state=313)
+                                                                                    random_state=123)
         for train_index, test_index in cv.split(X_train_split, y_train_split):
             X_train, X_test = X_train_split[train_index], X_train_split[test_index]
             y_train, y_test = y_train_split[train_index], y_train_split[test_index]
