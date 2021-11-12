@@ -1,14 +1,17 @@
 import math
-
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
-import seaborn as sns
 
 
 def remove_duplicates(dataframe, verbose=False):
+    '''
+    Removes the duplicate in a pandas.DataFrame
+
+    :param dataframe: the dataset stored in a pandas.Dataframe object
+    :param verbose: True to print some information on the execution
+    :return: a pandas.DataFrame without duplicates samples
+    '''
     duplicates = dataframe.duplicated(keep='first')
     if verbose is True:
         print("There are %d duplicates" % sum(duplicates))
@@ -22,6 +25,13 @@ def remove_duplicates(dataframe, verbose=False):
 
 
 def remove_missing_values(dataframe, verbose=False):
+    '''
+    Removes all the records with at least one missing values
+
+    :param dataframe: the dataset stored in a pandas.Dataframe object
+    :param verbose: True to print some information on the execution
+    :return: a the original dataset and a dataset without samples containing missing values
+    '''
     if verbose is True:
         print("There are %d missing values" % sum(dataframe.isna().sum()))
         print(dataframe.isna().sum())
@@ -37,6 +47,14 @@ def remove_missing_values(dataframe, verbose=False):
 
 
 def categorical_to_dummy(dataframe, variables2convert, verbose=False):
+    '''
+    Converts the selected attributes into dummy variables. Drops the last dummy variable for each attribute
+
+    :param dataframe: the pandas.DataFrame with the attributes to convert
+    :param variables2convert: a list containing the column names to convert
+    :param verbose: True to print information on the execution
+    :return: the dataset with the dummy variables converted
+    '''
     for variable in variables2convert:
         dummy = pd.get_dummies(dataframe[variable], drop_first=True)
         dataframe = dataframe.drop([variable], axis=1, inplace=False)
@@ -48,10 +66,18 @@ def categorical_to_dummy(dataframe, variables2convert, verbose=False):
     return dataframe
 
 
-def standardize(dataframe, features, verbose=False):
+def standardise(dataframe, features, verbose=False):
+    '''
+    Applies the sklearn.preprocessing.StandardScaler to the features selected
+
+    :param dataframe: the dataframe containing the variables to scale
+    :param features: a list of all the attributes to be scaled
+    :param verbose: True to print some information on the execution
+    :return: the dataset with the converted attributes and the StandardScaler() fitted
+    '''
     scaler = StandardScaler()
-    dataframe_stand = dataframe.copy()
-    scaler.fit(dataframe_stand.loc[:, :].astype(float))  # provo a selezionare qui i parametri
+    dataframe_stand = dataframe.copy()  # copy to keep the variables that should not be scaled
+    scaler.fit(dataframe_stand.loc[:, :].astype(float))
     dataframe_stand = pd.DataFrame(scaler.transform(dataframe_stand.loc[:, :].astype(float)))
     dataframe_stand.columns = dataframe.columns
 
@@ -66,63 +92,18 @@ def standardize(dataframe, features, verbose=False):
 
 
 def feature_2_log(dataframe, feature, log_base):
-    if min(dataframe.loc[:, feature]) < 0:
+    '''
+    Apply a logarithmic function to a specific feature of a dataset
+
+    :param dataframe: the dataset containing the feature to transform
+    :param feature: the attribute to apply the log function to
+    :param log_base: the base of the logarithmic function to apply
+    :return: the dataset with the converted attribute
+    '''
+    if min(dataframe.loc[:, feature]) < 0:  # offset to be added to the variable to avoid the log(0) issue
         offset = math.ceil(abs(min(dataframe.loc[:, feature])))
     else:
         offset = 1
     dataframe.loc[:, feature] = dataframe[feature].apply(lambda x: math.log(x + offset, log_base))
 
     return dataframe
-
-
-def pca(dataframe, verbose=False):
-    pca2 = PCA()
-
-    dataframe_pca = dataframe.copy()
-    dataframe_pca.drop(labels='Satisfied', axis=1, inplace=True)
-
-    pca2.fit(dataframe_pca)
-    dataframe_pca = pd.DataFrame(pca2.transform(dataframe_pca))
-    dataframe_pca['Satisfied'] = dataframe['Satisfied']
-
-    if verbose is True:
-        print("\n\n PCA: \n")
-        print("Dataset shape before PCA: ", str(dataframe.shape) + "\n")
-        print("Dataset shape after PCA: ", str(dataframe_pca.shape) + "\n")
-
-        print("Attributes variance:" + str(pd.DataFrame(pca2.explained_variance_).transpose()) + "\n")
-
-        explained_var = pd.DataFrame(pca2.explained_variance_ratio_).transpose()
-        sns.barplot(data=explained_var)
-        plt.show()
-
-        cum_explained_var = np.cumsum(pca2.explained_variance_ratio_)
-        plt.plot(cum_explained_var)
-        plt.xlabel('number of components')
-        plt.ylabel('cumulative explained variance')
-        plt.show()
-
-    return pca2, dataframe_pca
-
-
-def paired_plot(dataframe, target):
-    sns.pairplot(dataframe, hue=target)
-    plt.show()
-
-
-def count_outliers_boxplots(dataframe):
-    Q1 = dataframe.quantile(0.25)
-    Q3 = dataframe.quantile(0.75)
-    IQR = Q3 - Q1
-    print(((dataframe < (Q1 - 1.5 * IQR)) | (dataframe > (Q3 + 1.5 * IQR))).sum())
-
-
-def count_outliers_zindex(dataframe):
-    df = dataframe.copy(deep=True)
-    cols = list(dataframe.columns)
-
-    for col in cols:
-        col_zscore = col + '_z-score'
-        df[col_zscore] = (df[col] - df[col].mean()) / df[col].std(ddof=0)
-
-    print(((df.iloc[:, 20:] < -3) | (df.iloc[:, 20:] > 3)).sum())

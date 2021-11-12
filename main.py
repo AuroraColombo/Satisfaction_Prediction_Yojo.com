@@ -1,112 +1,54 @@
 from sklearn.metrics import f1_score
-from sklearn.model_selection import train_test_split, StratifiedKFold
-import matplotlib.image as mpimg
 from data.load_dataset import load_dataset
 from data.preparation import *
-from training.HeterogeneousEnsemble import HeterogeneousEnsemble
+from model.HeterogeneousEnsemble import HeterogeneousEnsemble
 
 
 def main():
+
+    # %% Loading the dataset
     dataframe = load_dataset('model.csv', False)
+
+    # %% Preparing the dataset
+    # We drop the attribute because of the high correlation with Arrival delay in days
     dataframe.drop(labels=['id', 'Shipping delay in days'], axis=1, inplace=True)
+
+    # Removing eventual identical records
     dataframe = remove_duplicates(dataframe, False)
-    dataframe, df_wo_nan = remove_missing_values(dataframe, False)
 
-    dataframe01 = dataframe.copy(deep=True)
-    dataframe01.drop(labels=['Manufacturer sustainability', 'NewUsed', 'Category'], axis=1, inplace=True)
-    dataframe19 = dataframe01.copy(deep=True)
-    dataframe19.drop(labels=['Age', 'Product description accuracy', 'Arrival delay in days', 'Gender'], axis=1,
-                     inplace=True)
+    # Removing records with at least one missing values
+    _, df_wo_nan = remove_missing_values(dataframe, False)
 
-    dataframe = categorical_to_dummy(dataframe, variables2convert=['Gender', 'Customer Type', 'NewUsed', 'Category',
-                                                                   'Satisfaction'], verbose=False)
+    # Converting the selected features to dummy variables
     df_wo_nan = categorical_to_dummy(df_wo_nan, variables2convert=['Gender', 'Customer Type', 'NewUsed', 'Category',
                                                                    'Satisfaction'], verbose=False)
 
-    dataframe01 = categorical_to_dummy(dataframe01, variables2convert=['Gender', 'Customer Type', 'Satisfaction'],
-                                       verbose=False)
-
-    dataframe19 = categorical_to_dummy(dataframe19, variables2convert=['Customer Type', 'Satisfaction'], verbose=False)
-
     # Normalizing variable 'Price' through log10 transformation
-
-    dataframe = feature_2_log(dataframe, 'Price', 10)
     df_wo_nan = feature_2_log(df_wo_nan, 'Price', 10)
-    dataframe01 = feature_2_log(dataframe01, 'Price', 10)
-    dataframe19 = feature_2_log(dataframe19, 'Price', 10)
 
     # StandardScaler only to numerical variables
-    dataframe, scaler = standardize(dataframe, ['Age', 'Price', 'Arrival delay in days',
+    df_wo_nan, scaler = standardise(df_wo_nan, ['Age', 'Price', 'Arrival delay in days',
                                                 'Product description accuracy', 'Manufacturer sustainability',
                                                 'Packaging quality',
                                                 'Additional options', 'Helpfulness of reviews and ratings',
                                                 'Integrity of packaging',
                                                 'Ease check-out procedure', 'Relevance of related products',
                                                 'Costumer insurance'], False)
-
-    df_wo_nan, scaler = standardize(df_wo_nan, ['Age', 'Price', 'Arrival delay in days',
-                                                'Product description accuracy', 'Manufacturer sustainability',
-                                                'Packaging quality',
-                                                'Additional options', 'Helpfulness of reviews and ratings',
-                                                'Integrity of packaging',
-                                                'Ease check-out procedure', 'Relevance of related products',
-                                                'Costumer insurance'], False)
-
-    dataframe01, scaler = standardize(dataframe01, ['Age', 'Price', 'Arrival delay in days',
-                                                    'Product description accuracy',
-                                                    'Packaging quality',
-                                                    'Additional options', 'Helpfulness of reviews and ratings',
-                                                    'Integrity of packaging',
-                                                    'Ease check-out procedure', 'Relevance of related products',
-                                                    'Costumer insurance'], False)
-
-    dataframe19, scaler = standardize(dataframe19, ['Price',
-                                                    'Packaging quality',
-                                                    'Additional options', 'Helpfulness of reviews and ratings',
-                                                    'Integrity of packaging',
-                                                    'Ease check-out procedure', 'Relevance of related products',
-                                                    'Costumer insurance'], False)
-
-    # Paired plot. commented for execution time reasons
-    # paired_plot(dataframe, 'Satisfied')
-    # plt.show()
-
-    # PCA
-    pca2, dataframe_pca = pca(dataframe, verbose=True)  # At this point dataframe is only scaled
-    pca2, dataframe_pca01 = pca(dataframe01, verbose=True)
-    pca2, dataframe_pca19 = pca(dataframe19, verbose=True)
-
-    # Outliers
-    print('Outliers identification via z-index\n')
-    count_outliers_zindex(dataframe)
-    print('\nOutliers identification via boxplot\n')
-    count_outliers_boxplots(dataframe)
-
-    # Models training and grid search
-    # test_model(dataframe)
 
     # Heterogeneous Ensemble method
 
+    het_ens = HeterogeneousEnsemble(threshold=2)
+    het_ens.test(dataframe=df_wo_nan)
+
+    het_ens.save_model()
+
     y = df_wo_nan['Satisfied']
     X = df_wo_nan.iloc[:, :-1]
-    cv = StratifiedKFold(n_splits=5, shuffle=False)
-    c = []
     X = X.values
     y = y.values
-    threshold = 4
-    for train_index, test_index in cv.split(X, y):
-        X_train, X_test = X[train_index], X[test_index]
-        y_train, y_test = y[train_index], y[test_index]
-        het_ens = HeterogeneousEnsemble(threshold=threshold)
-        het_ens.fit(X_train, y_train)
-        y_pred = het_ens.predict(X_test)
-        c.append(f1_score(y_test, y_pred))
-
-    print(round(np.mean(c) * 100, 2), round(np.std(c) * 100, 2))
-    print(threshold)
-
-    # Testing knn
-    # test_knn(dataframe, 60, 63, 1) # 61 is the optimal
+    het_ens = HeterogeneousEnsemble.load_model_from_filename('heterogeneous_ensemble.pkl')
+    y_pred = het_ens.predict(X)
+    print(f1_score(y, y_pred))
 
 
 if __name__ == '__main__':
