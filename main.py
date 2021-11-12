@@ -1,3 +1,5 @@
+import pickle
+
 from sklearn.metrics import f1_score
 from data.load_dataset import load_dataset
 from data.preparation import *
@@ -5,7 +7,6 @@ from model.HeterogeneousEnsemble import HeterogeneousEnsemble
 
 
 def main():
-
     # %% Loading the dataset
     dataframe = load_dataset('model.csv', False)
 
@@ -35,17 +36,20 @@ def main():
                                                 'Ease check-out procedure', 'Relevance of related products',
                                                 'Costumer insurance'], False)
 
-    # Heterogeneous Ensemble method
+    pickle.dump(scaler, open('scaler.pkl', 'wb'))
+
+    # %% Heterogeneous Ensemble method,
+
+    # Instance of the model and testing via cross validation
+    het_ens = HeterogeneousEnsemble(threshold=2)
+    het_ens.test(df_wo_nan)
+    X = df_wo_nan.iloc[:, :-1].values
+    y = df_wo_nan['Satisfied'].values
 
     het_ens = HeterogeneousEnsemble(threshold=2)
-    het_ens.test(dataframe=df_wo_nan)
+    het_ens.fit(X=X, y=y)
 
     het_ens.save_model()
-
-    y = df_wo_nan['Satisfied']
-    X = df_wo_nan.iloc[:, :-1]
-    X = X.values
-    y = y.values
     het_ens = HeterogeneousEnsemble.load_model_from_filename('heterogeneous_ensemble.pkl')
     y_pred = het_ens.predict(X)
     print(f1_score(y, y_pred))

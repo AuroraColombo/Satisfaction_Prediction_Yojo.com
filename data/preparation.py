@@ -67,14 +67,14 @@ def categorical_to_dummy(dataframe, variables2convert, verbose=False):
 
 
 def standardise(dataframe, features, verbose=False):
-    '''
+    """
     Applies the sklearn.preprocessing.StandardScaler to the features selected
 
     :param dataframe: the dataframe containing the variables to scale
     :param features: a list of all the attributes to be scaled
     :param verbose: True to print some information on the execution
     :return: the dataset with the converted attributes and the StandardScaler() fitted
-    '''
+    """
     scaler = StandardScaler()
     dataframe_stand = dataframe.copy()  # copy to keep the variables that should not be scaled
     scaler.fit(dataframe_stand.loc[:, :].astype(float))
@@ -92,14 +92,14 @@ def standardise(dataframe, features, verbose=False):
 
 
 def feature_2_log(dataframe, feature, log_base):
-    '''
+    """
     Apply a logarithmic function to a specific feature of a dataset
 
     :param dataframe: the dataset containing the feature to transform
     :param feature: the attribute to apply the log function to
     :param log_base: the base of the logarithmic function to apply
     :return: the dataset with the converted attribute
-    '''
+    """
     if min(dataframe.loc[:, feature]) < 0:  # offset to be added to the variable to avoid the log(0) issue
         offset = math.ceil(abs(min(dataframe.loc[:, feature])))
     else:

@@ -12,8 +12,6 @@ class HeterogeneousEnsemble:
     """
     Class to build and use an heterogeneous ensemble model
 
-    ...
-
     Attributes
     ----------
     mlp: Multilayer Perceptron
@@ -31,11 +29,11 @@ class HeterogeneousEnsemble:
     @staticmethod load_model_from_filename: load a model from a pickle file
     """
     def __init__(self, threshold=2):
-        '''
+        """
         Initialize the estimators of the model
 
         :param threshold: the majority voting threshold to classify a record as 'Satisfied'
-        '''
+        """
         self.mlp = MLPClassifier(activation='tanh', alpha=0.0001, batch_size=250, hidden_layer_sizes=14,
                                  learning_rate='constant', max_iter=1000, solver='adam', tol=0.001, random_state=313)
         self.rf = RandomForestClassifier(n_estimators=37, criterion='gini',
@@ -51,12 +49,12 @@ class HeterogeneousEnsemble:
         self.threshold = threshold
 
     def predict(self, X):
-        '''
+        """
         Make a prediction on a dataset
 
         :param X: the dataset to make the predictions on
         :return: the predicted values
-        '''
+        """
         dt_pred = self.dt.predict(X)
         rf_pred = self.rf.predict(X)
         mlp_pred = self.mlp.predict(X)
@@ -66,19 +64,19 @@ class HeterogeneousEnsemble:
         return results
 
     def fit(self, X, y):
-        '''
+        """
         Fit the estimators on the dataset X based on the target values in y
 
         :param X: the training input samples
         :param y: the target values as integers
-        '''
+        """
         self.dt.fit(X, y)
         self.rf.fit(X, y)
         self.mlp.fit(X, y)
         self.svm.fit(X, y)
 
     def __voting(self, tree_pred, forest_pred, ann_pred, svm_pred):
-        '''
+        """
         Perform the majority voting between the estiamtors
 
         :param tree_pred: the prediction of the decision tree
@@ -86,7 +84,7 @@ class HeterogeneousEnsemble:
         :param ann_pred: the prediction of the multilayer perceptron
         :param svm_pred: the prediction of the support vector machine
         :return: the predicted values after the voting
-        '''
+        """
 
         results = np.zeros(shape=(len(tree_pred),))
 
@@ -106,11 +104,11 @@ class HeterogeneousEnsemble:
         return results
 
     def test(self, dataframe):
-        '''
+        """
         Perform a cross validation evaluation on a given dataset
 
         :param dataframe: the dataset to perform cross validation on
-        '''
+        """
         y = dataframe['Satisfied']
         X = dataframe.iloc[:, :-1]
         cv = StratifiedKFold(n_splits=5, shuffle=False)
@@ -135,17 +133,17 @@ class HeterogeneousEnsemble:
         print("f1  train %.3f   test %.3f" % (f1_score(y_train_split, y_pred_train), f1_score(y_test_split, y_pred)))
 
     def save_model(self):
-        '''
+        """
         Saves the model to a .pkl file
-        '''
+        """
         pickle.dump(self, open('heterogeneous_ensemble.pkl', 'wb'))
 
     @staticmethod
     def load_model_from_filename(filename):
-        '''
+        """
         Load a model from a .pkl file
 
         :param filename: the path to the .pkl file
         :return: an HeterogeneousEnsemble instance
-        '''
+        """
         return pickle.load(open(filename, 'rb'))
