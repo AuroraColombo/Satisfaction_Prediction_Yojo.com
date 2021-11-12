@@ -27,6 +27,7 @@ def remove_missing_values(dataframe, verbose=False):
         print(dataframe.isna().sum())
 
     dataframe_wo_nan = dataframe.dropna(axis=0, how='any', inplace=False)
+    dataframe_wo_nan.reset_index(drop=True, inplace=True)
     dataframe['Age'] = dataframe['Age'].fillna(-1)
 
     if verbose is True:
@@ -115,12 +116,13 @@ def count_outliers_boxplots(dataframe):
     IQR = Q3 - Q1
     print(((dataframe < (Q1 - 1.5 * IQR)) | (dataframe > (Q3 + 1.5 * IQR))).sum())
 
+
 def count_outliers_zindex(dataframe):
     df = dataframe.copy(deep=True)
     cols = list(dataframe.columns)
 
     for col in cols:
         col_zscore = col + '_z-score'
-        df[col_zscore] = (df[col] - df[col].mean())/df[col].std(ddof=0)
+        df[col_zscore] = (df[col] - df[col].mean()) / df[col].std(ddof=0)
 
-    print(((df < -3) | (df > 3)).sum())
+    print(((df.iloc[:, 20:] < -3) | (df.iloc[:, 20:] > 3)).sum())

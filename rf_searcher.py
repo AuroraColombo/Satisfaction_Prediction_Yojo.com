@@ -1,12 +1,37 @@
-from sklearn.metrics import f1_score
-from sklearn.model_selection import train_test_split, StratifiedKFold
-import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score, StratifiedKFold
+from tqdm import tqdm
+
 from data.load_dataset import load_dataset
-from data.preparation import *
-from training.HeterogeneousEnsemble import HeterogeneousEnsemble
+from data.preparation import pca, standardize, feature_2_log, categorical_to_dummy, remove_duplicates, \
+    remove_missing_values
 
 
-def main():
+def RandomForest(df, n_splits=10, n_estimators=10, criterion="gini", max_depth=None, min_samples_split=2,
+                 min_samples_leaf=1, min_weight_fraction_leaf=0., max_features=1.0,
+                 random_state=0, max_leaf_nodes=None, min_impurity_decrease=0., max_samples=1.0,
+                 class_weight=None, ccp_alpha=0.0, bootstrap=False):
+    y = df['Satisfied']
+    X = df.iloc[:, :-1]
+
+    Random_Forest = RandomForestClassifier(n_estimators=n_estimators,
+                                           criterion=criterion, max_depth=max_depth,
+                                           min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
+                                           min_weight_fraction_leaf=min_weight_fraction_leaf, max_features=max_features,
+                                           random_state=random_state, max_leaf_nodes=max_leaf_nodes,
+                                           min_impurity_decrease=min_impurity_decrease, class_weight=class_weight,
+                                           ccp_alpha=ccp_alpha, bootstrap=bootstrap, max_samples=max_samples)
+
+    cv = StratifiedKFold(n_splits=n_splits, shuffle=False)
+    c = cross_val_score(Random_Forest, X, y, cv=cv, scoring='f1', n_jobs=-1)
+
+    return c, round(np.mean(c) * 100, 2), round(np.std(c) * 100, 2)
+
+
+if __name__ == '__main__':
+
     dataframe = load_dataset('model.csv', False)
     dataframe.drop(labels=['id', 'Shipping delay in days'], axis=1, inplace=True)
     dataframe = remove_duplicates(dataframe, False)
@@ -67,47 +92,46 @@ def main():
                                                     'Ease check-out procedure', 'Relevance of related products',
                                                     'Costumer insurance'], False)
 
-    # Paired plot. commented for execution time reasons
+    # Paired plot
     # paired_plot(dataframe, 'Satisfied')
     # plt.show()
 
     # PCA
-    pca2, dataframe_pca = pca(dataframe, verbose=True)  # At this point dataframe is only scaled
-    pca2, dataframe_pca01 = pca(dataframe01, verbose=True)
-    pca2, dataframe_pca19 = pca(dataframe19, verbose=True)
+    pca2, dataframe_pca = pca(dataframe, verbose=False)  # At this point dataframe is only scaled
+    pca2, dataframe_pca01 = pca(dataframe01, verbose=False)  # At this point dataframe is only scaled
+    pca2, dataframe_pca19 = pca(dataframe19, verbose=False)  # At this point dataframe is only scaled
 
-    # Outliers
-    print('Outliers identification via z-index\n')
-    count_outliers_zindex(dataframe)
-    print('\nOutliers identification via boxplot\n')
-    count_outliers_boxplots(dataframe)
+    f1 = []
+    x = []
 
-    # Models training and grid search
-    # test_model(dataframe)
+    start = 1
+    end = 2
+    length = range(start, end)
 
-    # Heterogeneous Ensemble method
+    for i in tqdm(length):
+        _, c, _ = RandomForest(df_wo_nan, n_splits=5, n_estimators=37, criterion='gini',
+                               max_depth=29, random_state=0, min_samples_split=38,
+                               min_samples_leaf=1, max_leaf_nodes=None, max_samples=0.1, max_features=0.49,
+                               min_impurity_decrease=0.0, ccp_alpha=0.0, class_weight='balanced', bootstrap=False)
 
-    y = df_wo_nan['Satisfied']
-    X = df_wo_nan.iloc[:, :-1]
-    cv = StratifiedKFold(n_splits=5, shuffle=False)
-    c = []
-    X = X.values
-    y = y.values
-    threshold = 4
-    for train_index, test_index in cv.split(X, y):
-        X_train, X_test = X[train_index], X[test_index]
-        y_train, y_test = y[train_index], y[test_index]
-        het_ens = HeterogeneousEnsemble(threshold=threshold)
-        het_ens.fit(X_train, y_train)
-        y_pred = het_ens.predict(X_test)
-        c.append(f1_score(y_test, y_pred))
+        f1.append(c)
+        x.append(i)
 
-    print(round(np.mean(c) * 100, 2), round(np.std(c) * 100, 2))
-    print(threshold)
+    # min samples split per ora inferiore a 315 ca
+    plt.plot(x, f1)
+    plt.grid()
+    # naming the x axis
+    plt.xlabel('params')
+    # naming the y axis
+    plt.ylabel('F1')
 
-    # Testing knn
-    # test_knn(dataframe, 60, 63, 1) # 61 is the optimal
+    # giving a title to my graph
 
+    plt.title('Param/F1')
 
-if __name__ == '__main__':
-    main()
+    # plt.savefig("Min_impurity_decrease.png")
+    # function to show the plot
+    plt.show()
+
+    print(max(f1))
+    print(x[f1.index(max(f1))])

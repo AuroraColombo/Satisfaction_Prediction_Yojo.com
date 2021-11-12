@@ -15,9 +15,9 @@ from sklearn import metrics
 def get_decision_tree():
     tree = DecisionTreeClassifier()
     parameters = {'criterion': ['entropy', 'gini'],
-                  'max_depth': np.arange(2, 40, 5),
-                  'min_samples_split': np.arange(1, 100, 10),
-                  'min_samples_leaf': np.arange(1, 100, 10),
+                  'max_depth': np.arange(2, 40, 1),
+                  'min_samples_split': np.arange(1, 100, 5),
+                  'min_samples_leaf': np.arange(1, 100, 5),
                   'class_weight': ['balanced', None]}
 
     return tree, parameters
@@ -63,12 +63,12 @@ def get_multilayer_perceptron():
 
 def get_ensemble():
     bagging = RandomForestClassifier()
-    parameters = {'criterion': ['gini', 'entropy'],
-                  'max_depth': [2, 20, 50],
+    parameters = {'criterion': ['gini'],
+                  'max_depth': [50, 100],
                   'min_samples_split': [2, 100],
                   'min_samples_leaf': [1, 100],
-                  'class_weight': ['balanced', None],
-                  'n_estimators': [2, 50, 100],
+                  'class_weight': ['balanced'],
+                  'n_estimators': [50, 100],
                   'max_samples': [0.5, 1.0],
                   'max_features': [0.5, 1.0],
                   'bootstrap': [False, True]}
@@ -85,10 +85,10 @@ def get_adaboost():
 
 def get_svm():
     classifier = SVC()
-    parameters = {"kernel": ['linear', 'poly', 'rbf', 'sigmoid'],
-                  "C": [0.1, 100],
-                  "gamma": np.arange(0.5, 1.5, 0.01),
-                  "degree": [2, 3, 4]}
+    parameters = {"kernel": ['sigmoid'],
+                  "C": [0.0001],
+                  "gamma": [0.5],
+                  "degree": [2]}
 
     return classifier, parameters
 
