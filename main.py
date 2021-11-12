@@ -1,6 +1,8 @@
 import pickle
 
 from sklearn.metrics import f1_score
+from sklearn.model_selection import train_test_split
+
 from data.load_dataset import load_dataset
 from data.preparation import *
 from model.HeterogeneousEnsemble import HeterogeneousEnsemble
@@ -42,17 +44,7 @@ def main():
 
     # Instance of the model and testing via cross validation
     het_ens = HeterogeneousEnsemble(threshold=2)
-    het_ens.test(df_wo_nan)
-    X = df_wo_nan.iloc[:, :-1].values
-    y = df_wo_nan['Satisfied'].values
-
-    het_ens = HeterogeneousEnsemble(threshold=2)
-    het_ens.fit(X=X, y=y)
-
-    het_ens.save_model()
-    het_ens = HeterogeneousEnsemble.load_model_from_filename('heterogeneous_ensemble.pkl')
-    y_pred = het_ens.predict(X)
-    print(f1_score(y, y_pred))
+    het_ens.cross_validation(df_wo_nan)
 
 
 if __name__ == '__main__':

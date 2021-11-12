@@ -77,7 +77,7 @@ class HeterogeneousEnsemble:
 
     def __voting(self, tree_pred, forest_pred, ann_pred, svm_pred):
         """
-        Perform the majority voting between the estiamtors
+        Perform the majority voting between the estimators
 
         :param tree_pred: the prediction of the decision tree
         :param forest_pred: the prediction of the random forest
@@ -103,7 +103,7 @@ class HeterogeneousEnsemble:
 
         return results
 
-    def test(self, dataframe):
+    def cross_validation(self, dataframe):
         """
         Perform a cross validation evaluation on a given dataset
 
